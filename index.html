@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Información y Gestión Educativa - Validación de documentos</title>
+    <!-- FontAwesome para íconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --gob-burgundy: #4A121A;
+            --gob-burgundy-dark: #360B12;
+            --gob-gold: #8B6D29;
+            --gob-gold-light: #B38E46;
+            --gob-green: #1E5B4B;
+            --gob-green-hover: #164337;
+            --gob-gray-btn: #666666;
+            --gob-gray-bg: #F9F9F9;
+            --border-color: #E0E0E0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background-color: #FFFFFF;
+            color: #333333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* BANNER SUPERIOR - LOGOS Y MENÚ */
+        .top-navbar {
+            background-color: var(--gob-burgundy);
+            color: white;
+            padding: 10px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Espacio reservado para tu Logo 1 */
+        .my-logo-placeholder {
+            border: 1px dashed rgba(255, 255, 255, 0.4);
+            padding: 5px 14px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.9);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.08);
+            cursor: pointer;
+        }
+
+        .top-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .top-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .top-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* MENÚ SECUNDARIO DORADO */
+        .sub-navbar {
+            background-color: var(--gob-gold);
+            padding: 10px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .siged-title {
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-items {
+            display: flex;
+            gap: 16px;
+            list-style: none;
+        }
+
+        .nav-items a {
+            color: white;
+            text-decoration: none;
+            font-size: 12px;
+        }
+
+        .nav-items a:hover {
+            opacity: 0.85;
+        }
+
+        /* CONTENIDO PRINCIPAL */
+        .main-container {
+            flex: 1;
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            background-image: radial-gradient(#d3d3d3 1px, transparent 1px);
+            background-size: 20px 20px;
+            background-color: #FAFAFA;
+        }
+
+        .header-title {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .header-title h2 {
+            font-size: 19px;
+            color: #545454;
+            font-weight: 400;
+        }
+
+        .header-title h1 {
+            font-size: 24px;
+            color: #333;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        /* BREADCRUMBS */
+        .breadcrumbs {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 25px;
+            padding-left: 2%;
+        }
+
+        .breadcrumbs a {
+            color: #666;
+            text-decoration: none;
+        }
+
+        /* CAJA DE BÚSQUEDA */
+        .search-card {
+            background: white;
+            border: 1px solid var(--gob-gold);
+            border-radius: 6px;
+            padding: 25px 30px;
+            max-width: 780px;
+            margin: 0 auto 30px auto;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
+
+        .search-form {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-folio {
+            flex: 1;
+            min-width: 280px;
+            padding: 10px 14px;
+            border: 1px solid #CCC;
+            border-radius: 4px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-folio:focus {
+            border-color: var(--gob-gold);
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-buscar {
+            background-color: var(--gob-green);
+        }
+
+        .btn-buscar:hover {
+            background-color: var(--gob-green-hover);
+        }
+
+        .btn-restablecer {
+            background-color: var(--gob-gray-btn);
+        }
+
+        .btn-restablecer:hover {
+            background-color: #555555;
+        }
+
+        .folio-help {
+            text-align: center;
+            margin-top: 12px;
+        }
+
+        .folio-help a {
+            color: var(--gob-gold);
+            font-size: 12px;
+            text-decoration: underline;
+        }
+
+        /* RESULTADOS */
+        .result-container {
+            max-width: 780px;
+            margin: 0 auto 30px auto;
+        }
+
+        /* ALERTA DE ERROR */
+        .status-invalid {
+            background-color: #F8D7DA;
+            border: 1px solid #F5C6CB;
+            color: #721C24;
+            padding: 25px;
+            text-align: center;
+            border-radius: 4px;
+        }
+
+        .status-invalid h4 {
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .status-invalid p {
+            font-size: 13px;
+        }
+
+        /* TARJETA DE VALIDEZ EXITOSA */
+        .status-valid {
+            background-color: #FFFFFF;
+            border: 1px solid #C3E6CB;
+            border-top: 4px solid var(--gob-green);
+            border-radius: 4px;
+            padding: 25px 30px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .valid-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--gob-green);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #E9ECEF;
+        }
+
+        .valid-header i {
+            font-size: 24px;
+        }
+
+        .valid-header h3 {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .data-item {
+            background: #F8F9FA;
+            padding: 12px 16px;
+            border-radius: 4px;
+            border-left: 3px solid var(--gob-gold);
+        }
+
+        .data-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #6C757D;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .data-value {
+            font-size: 14px;
+            color: #212529;
+            font-weight: 600;
+            word-break: break-word;
+        }
+
+        .data-item.full-width {
+            grid-column: 1 / -1;
+        }
+
+        /* CUADRO INFORMATIVO AZUL */
+        .info-box {
+            background-color: #D9EDF7;
+            border: 1px solid #BCE8F1;
+            color: #31708F;
+            padding: 15px 20px;
+            border-radius: 4px;
+            max-width: 780px;
+            margin: 0 auto;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .info-box strong {
+            font-weight: 700;
+        }
+
+        .info-box p {
+            margin-bottom: 8px;
+        }
+
+        .info-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* PIE DE PÁGINA */
+        footer {
+            background-color: var(--gob-burgundy);
+            color: white;
+            padding: 40px 8% 20px 8%;
+            font-size: 12px;
+            margin-top: 40px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-col h5 {
+            font-size: 14px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 8px;
+        }
+
+        .footer-col a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.9;
+        }
+
+        .footer-col a:hover {
+            text-decoration: underline;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .social-icons a {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 20px;
+            color: rgba(255,255,255,0.7);
+        }
+
+        @media (max-width: 600px) {
+            .top-navbar, .sub-navbar {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+            .search-card {
+                padding: 15px;
+            }
+            .input-folio {
+                width: 100%;
+            }
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BARRA NAVEGACIÓN SUPERIOR -->
+    <header>
+        <div class="top-navbar">
+            <div class="brand-container">
+                <!-- LOGO 1: Reemplaza esta caja por tu propia imagen -->
+                <div class="my-logo-placeholder" onclick="redirectToSiged(event)">
+                    <i class="fa-solid fa-image" style="margin-right: 6px;"></i> TU LOGO 1 AQUÍ
+                </div>
+            </div>
+            <div class="top-links">
+                <a href="#" onclick="redirectToSiged(event)">Trámites</a>
+                <a href="#" onclick="redirectToSiged(event)">Gobierno</a>
+                <a href="#" onclick="redirectToSiged(event)"><i class="fa-solid fa-magnifying-glass"></i></a>
+            </div>
+        </div>
+
+        <!-- SUB-BARRA DORADA -->
+        <div class="sub-navbar">
+            <div class="siged-title" style="cursor:pointer;" onclick="redirectToSiged(event)">SIGED</div>
+            <ul class="nav-items">
+                <li><a href="#" onclick="redirectToSiged(event)">¿Quiénes somos?</a></li>
+                <li><a href="#" onclick="redirectToSiged(event)">Consultas</a></li>
+                <li><a href="#" onclick="redirectToSiged(event)">Estadística educativa</a></li>
+                <li><a href="#" onclick="redirectToSiged(event)">Indicadores educativos</a></li>
+                <li><a href="#" onclick="redirectToSiged(event)">Datos abiertos</a></li>
+                <li><a href="#" onclick="redirectToSiged(event)">Aviso de Privacidad</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-container">
+        
+        <div class="breadcrumbs">
+            <a href="#" onclick="redirectToSiged(event)">Inicio</a> / 
+            <a href="#" onclick="redirectToSiged(event)">Consultas</a> / 
+            <strong>Documentos académicos electrónicos</strong>
+        </div>
+
+        <div class="header-title">
+            <h2>Sistema de Información y Gestión Educativa</h2>
+            <h1>Validación de documentos académicos electrónicos</h1>
+        </div>
+
+        <!-- FORMULARIO BÚSQUEDA DE FOLIO -->
+        <div class="search-card">
+            <form id="searchForm" onsubmit="validarFolio(event)">
+                <div class="search-form">
+                    <input 
+                        type="text" 
+                        id="folioInput" 
+                        class="input-folio" 
+                        placeholder="Ingrese el folio de verificación"
+                        value="7ghU1Lm-bvc4-mk8f-7hngF32Lm8xc4Zs"
+                        required
+                    >
+                    <button type="submit" class="btn btn-buscar">Buscar</button>
+                    <button type="button" class="btn btn-restablecer" onclick="resetForm()">Restablecer</button>
+                </div>
+            </form>
+            <div class="folio-help">
+                <a href="#" onclick="redirectToSiged(event)">Ubica el folio en tu certificado</a>
+            </div>
+        </div>
+
+        <!-- ÁREA DONDE APARECEN LOS RESULTADOS -->
+        <div id="resultContainer" class="result-container">
+            <!-- Caso: Folio Inválido -->
+            <div id="invalidResult" class="status-invalid" style="display: none;">
+                <h4>Estatus del documento:</h4>
+                <p>Folio Inválido</p>
+            </div>
+
+            <!-- Caso: Folio Válido (Muestra los datos configurados) -->
+            <div id="validResult" class="status-valid" style="display: none;">
+                <div class="valid-header">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <h3>Documento Auténtico y Validado</h3>
+                </div>
+                <div class="data-grid">
+                    <div class="data-item full-width">
+                        <div class="data-label">Alumno</div>
+                        <div class="data-value" id="resAlumno">-</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-label">CURP</div>
+                        <div class="data-value" id="resCurp">-</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-label">No. de Boleta</div>
+                        <div class="data-value" id="resBoleta">-</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-label">No. de Cédula</div>
+                        <div class="data-value" id="resCedula">-</div>
+                    </div>
+                    <div class="data-item full-width">
+                        <div class="data-label">Carrera / Nivel</div>
+                        <div class="data-value" id="resCarrera">-</div>
+                    </div>
+                    <div class="data-item full-width">
+                        <div class="data-label">Folio de Verificación</div>
+                        <div class="data-value" id="resFolio" style="font-family: monospace; font-size: 13px;">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NOTA INFORMATIVA AZUL -->
+        <div class="info-box">
+            <p><strong>¡Atención!</strong> La información de los certificados que se muestran en este portal, es el resultado de la integración de información que envían las autoridades educativas de los estados y de la Ciudad de México. En caso de que la información presentada no coincida con tu documento o no esté disponible, por favor ponte en contacto con la autoridad de tu centro escolar.</p>
+            <p>La información presentada es de carácter informativa y para verificación del documento impreso. El documento oficial es el que se entrega a los padres o tutores de los educandos en sus centros escolares.</p>
+        </div>
+
+    </main>
+
+    <!-- PIE DE PÁGINA -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <!-- LOGO 2: Reemplaza esta caja por tu propia imagen -->
+                <div class="my-logo-placeholder" onclick="redirectToSiged(event)" style="display:inline-flex; padding: 8px 16px;">
+                    <i class="fa-solid fa-image" style="margin-right: 6px;"></i> TU LOGO 2 AQUÍ
+                </div>
+            </div>
+            <div class="footer-col">
+                <h5>Enlaces</h5>
+                <ul>
+                    <li><a href="#" onclick="redirectToSiged(event)">Datos abiertos de la SABG</a></li>
+                    <li><a href="#" onclick="redirectToSiged(event)">Marco Jurídico</a></li>
+                    <li><a href="#" onclick="redirectToSiged(event)">Plataforma Nacional de Transparencia</a></li>
+                    <li><a href="#" onclick="redirectToSiged(event)">Transparencia para el pueblo</a></li>
+                    <li><a href="#" onclick="redirectToSiged(event)">Alerta</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h5>¿Qué es gob.mx?</h5>
+                <p style="margin-bottom: 10px;">Es el portal único de trámites, información y participación ciudadana. <a href="#" onclick="redirectToSiged(event)" style="text-decoration: underline;">Leer más</a></p>
+                <ul>
+                    <li><a href="#" onclick="redirectToSiged(event)">Portal de datos abiertos</a></li>
+                    <li><a href="#" onclick="redirectToSiged(event)">Declaración de accesibilidad</a></li>
+                    <li><a href="#" onclick="redirectToSiged(event)">Términos y Condiciones</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h5><a href="#" onclick="redirectToSiged(event)">Denuncia contra servidores públicos</a></h5>
+                <h5 style="margin-top: 15px;">Síguenos en</h5>
+                <div class="social-icons">
+                    <a href="#" onclick="redirectToSiged(event)"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" onclick="redirectToSiged(event)"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="#" onclick="redirectToSiged(event)"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" onclick="redirectToSiged(event)"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; Sistema de Información y Gestión Educativa - Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- LÓGICA DE VALIDACIÓN Y REDIRECCIÓN -->
+    <script>
+        // URL externa para la redirección de cualquier otro botón/enlace
+        const TARGET_URL = "https://siged.sep.gob.mx/SIGED/documentos.html?folio=794147b1-8248-4b2d-8751-0ae11d9c4229&utm_source=chatgpt.com";
+
+        // Función global de redirección
+        function redirectToSiged(event) {
+            if (event) event.preventDefault();
+            window.location.href = TARGET_URL;
+        }
+
+        // Configuración del Folio y Datos
+        const CERTIFICADOS_DATABASE = {
+            "7ghU1Lm-bvc4-mk8f-7hngF32Lm8xc4Zs": {
+                alumno: "ANGEL ADRIAN CANTU GARCIA",
+                curp: "CXGA970821HNLNRN07",
+                boleta: "Ñ 902356371698X",
+                cedula: "97410316",
+                carrera: "LICENCIATURA EN ADMINISTRACION"
+            }
+        };
+
+        // Procesar formulario al dar click en 'Buscar'
+        function validarFolio(e) {
+            e.preventDefault();
+            const folioInput = document.getElementById('folioInput').value.trim();
+            const resultContainer = document.getElementById('resultContainer');
+            const invalidResult = document.getElementById('invalidResult');
+            const validResult = document.getElementById('validResult');
+
+            resultContainer.style.display = 'block';
+
+            if (CERTIFICADOS_DATABASE[folioInput]) {
+                const data = CERTIFICADOS_DATABASE[folioInput];
+                
+                // Asignar datos al DOM
+                document.getElementById('resAlumno').innerText = data.alumno;
+                document.getElementById('resCurp').innerText = data.curp;
+                document.getElementById('resBoleta').innerText = data.boleta;
+                document.getElementById('resCedula').innerText = data.cedula;
+                document.getElementById('resCarrera').innerText = data.carrera;
+                document.getElementById('resFolio').innerText = folioInput;
+
+                invalidResult.style.display = 'none';
+                validResult.style.display = 'block';
+            } else {
+                validResult.style.display = 'none';
+                invalidResult.style.display = 'block';
+            }
+        }
+
+        // Limpiar formulario y ocultar resultados al presionar 'Restablecer'
+        function resetForm() {
+            document.getElementById('folioInput').value = '';
+            document.getElementById('resultContainer').style.display = 'none';
+            document.getElementById('invalidResult').style.display = 'none';
+            document.getElementById('validResult').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
